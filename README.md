@@ -2,10 +2,15 @@
 
 This project is meant to provide a tutorial and example of using API for newbies in NCCU FloodFire research team. 
 
+Since JavaScript is the most popular and cross-platform PL of web development, I chose it as the main programming language. It's always welcome other outstanding language sample.
+
+* 專案目的：提供政治大學水火團隊開發同學使用 API 的教學與範例
+* 主要語言：`JavaScript`  
+
 #Coverage API
 ##社群媒體
-* Twitter (current API version:
-* Facebook (current API version:
+* Twitter (current API version: 1.1)
+* Facebook (current API version: 2.2)
 * PTT
 * Weibo
 
