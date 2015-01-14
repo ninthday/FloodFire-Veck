@@ -1,7 +1,7 @@
 #Twitter API
 Twitter 提供的 API 有很多種，水火團隊近期最主要使用的 API 有兩個：
-* REST APIs
-* Streaming APIs - 提供最即時的推文資訊，特色是像水流(stream)一般一直回傳目前最新的公開推文
+* REST APIs - 最基本的網頁 API，提供以 GET 和 POST 兩種 HTTP 資料傳輸方法存取或操作應用程式的 API
+* Streaming APIs - 提供最即時的推文資訊
 * (Search APIs - 早期的 API，目前好像併入 REST APIs 中了)
 
 目前在 JavaScript (node.js) 有一個很方便的套件 `node-twitter`，且涵蓋 REST, streaming and search，因此介紹會直接以此套件作為呼叫的模組：[https://github.com/desmondmorris/node-twitter](https://github.com/desmondmorris/node-twitter)
@@ -12,7 +12,7 @@ Twitter 提供的 API 有很多種，水火團隊近期最主要使用的 API �
 * API Console Tool - Exploring the Twitter API: [https://dev.twitter.com/rest/tools/console](https://dev.twitter.com/rest/tools/console)
 
 #Prepare
-開始使用 API 之前，需要有些事前的準備：
+開始使用 API 之前，需要有些事前的準備
 
 ##開發環境
 1. 因為我們採用 node.js 作為 JavaScript 的執行環境，所以需要安裝 node.js
@@ -39,6 +39,10 @@ Twitter 提供的 API 有很多種，水火團隊近期最主要使用的 API �
 ![](image/access_token.png)
 
 至此，就完成的前置的作業，可以開始寫 code 使用 API 了！
+
+##寫入權限
+如果你的 App 是有 write 的動作，例如發推文(tweeting)，因為預設是 Read-only，因此你需要到 Permissions 的頁籤去修改權限，而 access_token 也要重新產生一組喔！
+![](image/permissions.png)
 
 #Code for API
 ##REST APIs 
@@ -131,4 +135,29 @@ client.get('statuses/home_timeline', function(error, body, response){
 ![](image/real.png)
 第一個推文就是 `RT @Ri_Science: Inspired by the #xmaslectures? Submit your hacks to the #hackgallery, like this door unlocker http://t.co/TEy6WVmXhq http:/…'`
 
+要用 POST 的 API 也是直接把 .get 改成 .post 就可以了，而通常 POST 會帶參數值，如果要帶參數，不論 GET、POST，就在函數的 API name 和 callback function 之間加入一個參數 JSON 就可以了，例如我們用 POST 方法的 statuses/update API 來發文：
+```
+var status = "Should not longer than 140 characters.";
+client.post('statuses/update', {status: status}, function(error, body, response){
+	if(error) console.log(error);
+
+	console.log(body);
+});
+```
+記得要去修改註冊的 App Permission 為 Read and write，然後重新產生 Access Token，就可以執行了。
+![](image/tweeting.png)
+
 ##Streaming APIs
+Streaming API 的概念就是『即時新聞』，特色是像水流(stream)一般一直回傳目前最新的公開推文
+```
+client.stream('statuses/filter', {track: 'javascript'}, function(stream) {
+
+    stream.on('data', function(tweet) {
+        console.log(tweet.text);
+    });
+
+});
+```
+這裡我們去存取公開推文上所有包含 'javascript' 這個關鍵字的即時推文，filter 是提供關鍵字篩選的 API，參數 track 就是我們要下的關鍵字，並印出回傳的資料中內文(data)的部份，執行結果如下
+![](image/stream.png)
+有時候會看起來好像卡住沒在動，但是過一陣子就又跑出訊息，這很正常，因為這個關鍵字本來就不是每一秒鐘(甚至以電腦發送 request 的時間觀是每微秒)都有人在發送推文，所以有些實作 (可參考之前團隊學長做的 Twitter 資料蒐集平台) 都是長時間的發送存取請求，來監控一段時間內的特定關鍵字推文有哪些。
