@@ -11,7 +11,7 @@ Since JavaScript is the most popular and cross-platform PL of web development, I
 ##社群媒體
 * Twitter (current API version: 1.1)
 * Facebook (current API version: 2.2)
-* PTT
+* PTT	(不需要寫程式，非資科的助理也可輕易使用)
 * Weibo
 
 ##其它平台
